@@ -27,7 +27,7 @@ __pycache__/
 *$py.class
 
 # images, models, etc
-assets/
+#assets/
 
 # tex
 *.aux

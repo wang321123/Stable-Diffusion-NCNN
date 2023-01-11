@@ -14,7 +14,7 @@ find_package(OpenCV REQUIRED)
 find_package(ncnn REQUIRED)
 
 add_executable(testbed 
-    vs2019_opencv-mobile_ncnn-dll_demo.cpp
+    main.cpp
     prompt_slover.cpp
     diffusion_slover.cpp
     decoder_slover.cpp
