@@ -9,8 +9,8 @@ DecodeSlover::DecodeSlover()
 	net.opt.use_fp16_storage = true;
 	net.opt.use_fp16_arithmetic = true;
 	net.opt.use_packing_layout = true;
-	net.load_param("assets/AutoencoderKL-fp16.param");
-	net.load_model("assets/AutoencoderKL-fp16.bin");
+	net.load_param("../../assets/AutoencoderKL-fp16.param");
+	net.load_model("../../assets/AutoencoderKL-fp16.bin");
 }
 
 ncnn::Mat DecodeSlover::decode(ncnn::Mat sample)

@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <regex>
 #include <string>
 #include <vector>
@@ -31,7 +31,7 @@ int main()
 	//cout << "[positive prompt]:" << positive_prompt << endl;
 	//cout << "[negative prompt]:" << negative_prompt << endl;
 
-	step = 15;
+	step = 5;
 	seed = 42;
 	positive_prompt = "floating hair, portrait, ((loli)), ((one girl)), cute face, hidden hands, asymmetrical bangs, beautiful detailed eyes, eye shadow, hair ornament, ribbons, bowties, buttons, pleated skirt, (((masterpiece))), ((best quality)), colorful";
 	negative_prompt = "((part of the head)), ((((mutated hands and fingers)))), deformed, blurry, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, blurry, floating limbs, disconnected limbs, malformed hands, blur, out of focus, long neck, long body, Octane renderer, lowres, bad anatomy, bad hands, text";
