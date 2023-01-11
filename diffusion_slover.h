@@ -1,4 +1,8 @@
 #pragma once
+
+#include <math.h>
+#include <time.h>
+
 #include <iostream>
 #include <regex>
 #include <string>
@@ -6,12 +10,13 @@
 #include <stack>
 #include <fstream>
 #include <map>
-#include <math.h>
-#include <net.h>
-#include <opencv2/opencv.hpp>
 #include <algorithm>
-#include <time.h>
+
+#include <opencv2/opencv.hpp>
+
+#include <net.h>
 #include "benchmark.h"
+
 using namespace std;
 
 class DiffusionSlover

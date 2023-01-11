@@ -1,4 +1,7 @@
 #pragma once
+
+#include <math.h>
+
 #include <iostream>
 #include <regex>
 #include <string>
@@ -6,8 +9,9 @@
 #include <stack>
 #include <fstream>
 #include <map>
-#include <math.h>
+
 #include <net.h>
+
 using namespace std;
 
 class PromptSlover

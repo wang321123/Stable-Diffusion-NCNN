@@ -1,4 +1,8 @@
 #pragma once
+
+#include <time.h>
+#include <math.h>
+
 #include <iostream>
 #include <regex>
 #include <string>
@@ -6,11 +10,11 @@
 #include <stack>
 #include <fstream>
 #include <map>
-#include <math.h>
+#include <algorithm>
+
 #include <net.h>
 #include <opencv2/opencv.hpp>
-#include <algorithm>
-#include <time.h>
+
 using namespace std;
 
 class DecodeSlover
