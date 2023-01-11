@@ -21,7 +21,6 @@ public:
     ncnn::Mat decode(ncnn::Mat sample);
 
 private:
-
     const float factor[4] = { 5.48998f, 5.48998f, 5.48998f, 5.48998f };
 
     const float _mean_[3] = { -1.0f, -1.0f, -1.0f };

@@ -20,7 +20,7 @@ public:
 private:
     std::vector<std::string> split(std::string str);
     string whitespace_clean(string& text);
-    vector<pair<string, float>> parse_prompt_attention(string& texts);
+    vector<pair<string, float> > parse_prompt_attention(string& texts);
 
     map<string, int> tokenizer_token2idx;
     map<int, string> tokenizer_idx2token;

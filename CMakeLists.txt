@@ -14,16 +14,16 @@ find_package(OpenCV REQUIRED)
 find_package(ncnn REQUIRED)
 
 add_executable(testbed 
-    main.cpp
-    prompt_slover.cpp
-    diffusion_slover.cpp
-    decoder_slover.cpp
-    prompt_slover.h
-    diffusion_slover.h
-    decoder_slover.h
+  main.cpp
+  prompt_slover.cpp
+  diffusion_slover.cpp
+  decoder_slover.cpp
+  prompt_slover.h
+  diffusion_slover.h
+  decoder_slover.h
 )
 
 target_link_libraries(testbed
-    ncnn
-    ${OpenCV_LIBS}
+  ncnn
+  ${OpenCV_LIBS}
 )
