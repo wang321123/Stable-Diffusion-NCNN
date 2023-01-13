@@ -12,7 +12,7 @@ DiffusionSlover::DiffusionSlover()
     net.load_param("../../assets/UNetModel-fp16.param");
     net.load_model("../../assets/UNetModel-fp16.bin");
 
-    ifstream in("../../assets/log_sigmas.bin", ios::in | ios::binary);
+    std::ifstream in("../../assets/log_sigmas.bin", std::ios::in | std::ios::binary);
     in.read((char*)&log_sigmas, sizeof log_sigmas);
     in.close();
 }
@@ -34,7 +34,7 @@ ncnn::Mat DiffusionSlover::CFGDenoiser_CompVisDenoiser(ncnn::Mat& input, float s
 
     // sigma_to_t
     float log_sigma = log(sigma);
-    vector<float> dists(1000);
+    std::vector<float> dists(1000);
     for (int i = 0; i < 1000; i++)
     {
         if (log_sigma - log_sigmas[i] >= 0)
@@ -44,12 +44,12 @@ ncnn::Mat DiffusionSlover::CFGDenoiser_CompVisDenoiser(ncnn::Mat& input, float s
         if (i == 0) continue;
         dists[i] += dists[i - 1];
     }
-    int low_idx = min(int(max_element(dists.begin(), dists.end()) - dists.begin()), 1000 - 2);
+    int low_idx = std::min(int(max_element(dists.begin(), dists.end()) - dists.begin()), 1000 - 2);
     int high_idx = low_idx + 1;
     float low = log_sigmas[low_idx];
     float high = log_sigmas[high_idx];
     float w = (low - log_sigma) / (low - high);
-    w = max(0.f, min(1.f, w));
+    w = std::max(0.f, std::min(1.f, w));
     float t = (1 - w) * low_idx + w * high_idx;
 
     ncnn::Mat t_mat(1);
@@ -105,7 +105,7 @@ ncnn::Mat DiffusionSlover::sampler(int seed, int step, ncnn::Mat& c, ncnn::Mat& 
     ncnn::Mat x_mat = randn_4_64_64(seed % 1000);
 
     // t_to_sigma
-    vector<float> sigma(step);
+    std::vector<float> sigma(step);
     float delta = 0.0 - 999.0 / (step - 1);
     for (int i = 0; i < step; i++)
     {
@@ -124,14 +124,14 @@ ncnn::Mat DiffusionSlover::sampler(int seed, int step, ncnn::Mat& c, ncnn::Mat& 
     {
         for (int i = 0; i < sigma.size() - 1; i++)
         {
-            cout << "step:" << i << "\t\t";
+            std::cout << "step:" << i << "\t\t";
 
             double t1 = ncnn::get_current_time();
             ncnn::Mat denoised = CFGDenoiser_CompVisDenoiser(x_mat, sigma[i], c, uc);
             double t2 = ncnn::get_current_time();
-            cout << t2 - t1 << "ms" << endl;
+            std::cout << t2 - t1 << "ms" << std::endl;
 
-            float sigma_up = min(sigma[i + 1], sqrt(sigma[i + 1] * sigma[i + 1] * (sigma[i] * sigma[i] - sigma[i + 1] * sigma[i + 1]) / (sigma[i] * sigma[i])));
+            float sigma_up = std::min(sigma[i + 1], sqrt(sigma[i + 1] * sigma[i + 1] * (sigma[i] * sigma[i] - sigma[i + 1] * sigma[i + 1]) / (sigma[i] * sigma[i])));
             float sigma_down = sqrt(sigma[i + 1] * sigma[i + 1] - sigma_up * sigma_up);
 
             srand(time(NULL));
