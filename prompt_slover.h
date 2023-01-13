@@ -12,22 +12,20 @@
 
 #include <net.h>
 
-using namespace std;
-
 class PromptSlover
 {
 public:
     PromptSlover();
 
-    ncnn::Mat get_conditioning(string& prompt);
+    ncnn::Mat get_conditioning(std::string& prompt);
 
 private:
     std::vector<std::string> split(std::string str);
-    string whitespace_clean(string& text);
-    vector<pair<string, float> > parse_prompt_attention(string& texts);
+    std::string whitespace_clean(std::string& text);
+    std::vector<std::pair<std::string, float> > parse_prompt_attention(std::string& texts);
 
-    map<string, int> tokenizer_token2idx;
-    map<int, string> tokenizer_idx2token;
+    std::map<std::string, int> tokenizer_token2idx;
+    std::map<int, std::string> tokenizer_idx2token;
 
     ncnn::Net net;
 };

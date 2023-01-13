@@ -17,8 +17,6 @@
 #include <net.h>
 #include "benchmark.h"
 
-using namespace std;
-
 class DiffusionSlover
 {
 public:

@@ -4,11 +4,14 @@ project(stable_diffusion)
 
 set(CMAKE_CXX_STANDARD 11)
 
-### Look for the OpenCVConfig.cmake file by OpenCV_DIR variables ###
-set(OpenCV_DIR "D:/wzp2022/Libary/opencv4.6/opencv/build/x64/vc15/lib") 
+if(DEFINED ENV{ARTIFACTS_DIR})
+  set(ARTIFACTS_DIR "$ENV{ARTIFACTS_DIR}")
+else()
+  message(WARNING "ARTIFACTS_DIR env var not defined, abort")
+endif()
 
-### Look for the ncnnConfig.cmake file by ncnn_DIR variables
-set(ncnn_DIR "D:/wzp2022/github/ncnn/build/install/lib/cmake/ncnn")
+set(OpenCV_DIR "${ARTIFACTS_DIR}/opencv/build/x64/vc15/lib" CACHE STRING "Look for the OpenCVConfig.cmake file by OpenCV_DIR variables")
+set(ncnn_DIR "${ARTIFACTS_DIR}/ncnn/build/install/lib/cmake/ncnn" CACHE STRING "Look for the ncnnConfig.cmake file by ncnn_DIR variables")
 
 find_package(OpenCV REQUIRED)
 find_package(ncnn REQUIRED)

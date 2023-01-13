@@ -21,26 +21,26 @@ PromptSlover::PromptSlover()
     int idx = 0;
     while (getline(infile, s))
     {
-        tokenizer_token2idx.insert(pair<string, int>(s, idx));
-        tokenizer_idx2token.insert(pair<int, string>(idx, s));
+        tokenizer_token2idx.insert(std::pair<std::string, int>(s, idx));
+        tokenizer_idx2token.insert(std::pair<int, std::string>(idx, s));
         idx++;
     }
     infile.close();
 }
 
-ncnn::Mat PromptSlover::get_conditioning(string& prompt)
+ncnn::Mat PromptSlover::get_conditioning(std::string& prompt)
 {
     // 重要度计算可以匹配“()”和“[]”，圆括号是加重要度，方括号是减重要度
-    vector<pair<string, float> > parsed = parse_prompt_attention(prompt);
+    std::vector<std::pair<std::string, float> > parsed = parse_prompt_attention(prompt);
 
     // token转ids
-    vector<vector<int> > tokenized;
+    std::vector<std::vector<int> > tokenized;
     {
         for (auto p : parsed)
         {
-            vector<string> tokens = split(p.first);
-            vector<int> ids;
-            for (string token : tokens)
+            std::vector<std::string> tokens = split(p.first);
+            std::vector<int> ids;
+            for (std::string token : tokens)
             {
                 ids.push_back(tokenizer_token2idx[token]);
             }
@@ -49,13 +49,13 @@ ncnn::Mat PromptSlover::get_conditioning(string& prompt)
     }
 
     // 一些处理
-    vector<int> remade_tokens;
-    vector<float> multipliers;
+    std::vector<int> remade_tokens;
+    std::vector<float> multipliers;
     {
         int last_comma = -1;
         for (int it_tokenized = 0; it_tokenized < tokenized.size(); it_tokenized++)
         {
-            vector<int> tokens = tokenized[it_tokenized];
+            std::vector<int> tokens = tokenized[it_tokenized];
             float weight = parsed[it_tokenized].second;
 
             int i = 0;
@@ -66,20 +66,20 @@ ncnn::Mat PromptSlover::get_conditioning(string& prompt)
                 {
                     last_comma = remade_tokens.size();
                 }
-                else if ((max(int(remade_tokens.size()), 1) % 75 == 0) && (last_comma != -1) && (remade_tokens.size() - last_comma <= 20))
+                else if ((std::max(int(remade_tokens.size()), 1) % 75 == 0) && (last_comma != -1) && (remade_tokens.size() - last_comma <= 20))
                 {
                     last_comma += 1;
-                    vector<int> reloc_tokens(remade_tokens.begin() + last_comma, remade_tokens.end());
-                    vector<float> reloc_mults(multipliers.begin() + last_comma, multipliers.end());
-                    vector<int> _remade_tokens_(remade_tokens.begin(), remade_tokens.begin() + last_comma);
+                    std::vector<int> reloc_tokens(remade_tokens.begin() + last_comma, remade_tokens.end());
+                    std::vector<float> reloc_mults(multipliers.begin() + last_comma, multipliers.end());
+                    std::vector<int> _remade_tokens_(remade_tokens.begin(), remade_tokens.begin() + last_comma);
                     remade_tokens = _remade_tokens_;
                     int length = remade_tokens.size();
                     int rem = ceil(length / 75.0) * 75 - length;
-                    vector<int> tmp_token(rem, 49407);
+                    std::vector<int> tmp_token(rem, 49407);
                     remade_tokens.insert(remade_tokens.end(), tmp_token.begin(), tmp_token.end());
                     remade_tokens.insert(remade_tokens.end(), reloc_tokens.begin(), reloc_tokens.end());
-                    vector<float> _multipliers_(multipliers.begin(), multipliers.end() + last_comma);
-                    vector<int> tmp_multipliers(rem, 1.0f);
+                    std::vector<float> _multipliers_(multipliers.begin(), multipliers.end() + last_comma);
+                    std::vector<int> tmp_multipliers(rem, 1.0f);
                     _multipliers_.insert(_multipliers_.end(), tmp_multipliers.begin(), tmp_multipliers.end());
                     _multipliers_.insert(_multipliers_.end(), reloc_mults.begin(), reloc_mults.end());
                     multipliers = _multipliers_;
@@ -89,11 +89,11 @@ ncnn::Mat PromptSlover::get_conditioning(string& prompt)
                 i += 1;
             }
         }
-        int prompt_target_length = ceil(max(int(remade_tokens.size()), 1) / 75.0) * 75;
+        int prompt_target_length = ceil(std::max(int(remade_tokens.size()), 1) / 75.0) * 75;
         int tokens_to_add = prompt_target_length - remade_tokens.size();
-        vector<int> tmp_token(tokens_to_add, 49407);
+        std::vector<int> tmp_token(tokens_to_add, 49407);
         remade_tokens.insert(remade_tokens.end(), tmp_token.begin(), tmp_token.end());
-        vector<int> tmp_multipliers(tokens_to_add, 1.0f);
+        std::vector<int> tmp_multipliers(tokens_to_add, 1.0f);
         multipliers.insert(multipliers.end(), tmp_multipliers.begin(), tmp_multipliers.end());
     }
 
@@ -102,11 +102,11 @@ ncnn::Mat PromptSlover::get_conditioning(string& prompt)
     {
         while (remade_tokens.size() > 0)
         {
-            vector<int> rem_tokens(remade_tokens.begin() + 75, remade_tokens.end());
-            vector<float> rem_multipliers(multipliers.begin() + 75, multipliers.end());
+            std::vector<int> rem_tokens(remade_tokens.begin() + 75, remade_tokens.end());
+            std::vector<float> rem_multipliers(multipliers.begin() + 75, multipliers.end());
 
-            vector<int> current_tokens;
-            vector<float> current_multipliers;
+            std::vector<int> current_tokens;
+            std::vector<float> current_multipliers;
             if (remade_tokens.size() > 0)
             {
                 current_tokens.insert(current_tokens.end(), remade_tokens.begin(), remade_tokens.begin() + 75);
@@ -114,9 +114,9 @@ ncnn::Mat PromptSlover::get_conditioning(string& prompt)
             }
             else
             {
-                vector<int> tmp_token(75, 49407);
+                std::vector<int> tmp_token(75, 49407);
                 current_tokens.insert(current_tokens.end(), tmp_token.begin(), tmp_token.end());
-                vector<int> tmp_multipliers(75, 1.0f);
+                std::vector<int> tmp_multipliers(75, 1.0f);
                 current_multipliers.insert(current_multipliers.end(), tmp_multipliers.begin(), tmp_multipliers.end());
             }
 
@@ -152,18 +152,18 @@ ncnn::Mat PromptSlover::get_conditioning(string& prompt)
     return conds;
 }
 
-vector<pair<string, float> > PromptSlover::parse_prompt_attention(string& texts)
+std::vector<std::pair<std::string, float> > PromptSlover::parse_prompt_attention(std::string& texts)
 {
-    vector<pair<string, float> > res;
-    stack<int> round_brackets;
-    stack<int> square_brackets;
+    std::vector<std::pair<std::string, float> > res;
+    std::stack<int> round_brackets;
+    std::stack<int> square_brackets;
     const float round_bracket_multiplier = 1.1;
     const float square_bracket_multiplier = 1 / 1.1;
 
-    vector<string> ms;
+    std::vector<std::string> ms;
     for (char c : texts)
     {
-        string s = string(1, c);
+        std::string s = std::string(1, c);
         if (s == "(" || s == "[" || s == ")" || s == "]")
         {
             ms.push_back(s);
@@ -172,7 +172,7 @@ vector<pair<string, float> > PromptSlover::parse_prompt_attention(string& texts)
         {
             if (ms.size() < 1)
                 ms.push_back("");
-            string last = ms[ms.size() - 1];
+            std::string last = ms[ms.size() - 1];
             if (last == "(" || last == "[" || last == ")" || last == "]")
             {
                 ms.push_back("");
@@ -181,7 +181,7 @@ vector<pair<string, float> > PromptSlover::parse_prompt_attention(string& texts)
         }
     }
 
-    for (string text : ms)
+    for (std::string text : ms)
     {
         if (text == "(")
         {
@@ -249,9 +249,9 @@ vector<pair<string, float> > PromptSlover::parse_prompt_attention(string& texts)
     return res;
 }
 
-string PromptSlover::whitespace_clean(string& text)
+std::string PromptSlover::whitespace_clean(std::string& text)
 {
-    return regex_replace(text, regex("\\s+"), " ");
+    return std::regex_replace(text, std::regex("\\s+"), " ");
 }
 
 std::vector<std::string> PromptSlover::split(std::string str)
@@ -262,11 +262,11 @@ std::vector<std::string> PromptSlover::split(std::string str)
     int size = str.size();
     for (int i = 0; i < size; i++)
     {
-        pos = min(str.find(" ", i), str.find(",", i));
+        pos = std::min(str.find(" ", i), str.find(",", i));
         if (pos < size)
         {
             std::string s = str.substr(i, pos - i);
-            string pat = string(1, str[pos]);
+            std::string pat = std::string(1, str[pos]);
             if (s.length() > 0)
                 result.push_back(s + "</w>");
             if (pat != " ")
